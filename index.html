@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+<script src="service-worker.js"></script>
+    <title>Generador de Informes de Seguridad</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3e8e41;
+        }
+
+        #informeGenerado {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        #informeTexto {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Generador de Informes de Seguridad</h1>
+    <form id="informeForm">
+        <label for="fecha">Fecha del Informe:</label>
+        <input type="date" id="fecha" name="fecha" required><br><br>
+        <label for="ausentismos">AUSENTISMOS:</label>
+        <textarea id="ausentismos" name="ausentismos" placeholder="Ingrese cada nombre en una línea"></textarea><br><br>
+        <label for="seguridad">SEGURIDAD:</label>
+        <textarea id="seguridad" name="seguridad" placeholder="Ingrese cada punto en una línea"></textarea><br><br>
+        <label for="cctv">CCTV:</label>
+        <textarea id="cctv" name="cctv" placeholder="Ingrese cada punto en una línea"></textarea><br><br>
+        <label for="vts">VTS:</label>
+        <textarea id="vts" name="vts" placeholder="Ingrese cada punto en una línea"></textarea><br><br>
+        <label for="recepcion">RECEPCIÓN:</label>
+        <textarea id="recepcion" name="recepcion" placeholder="Ingrese cada punto en una línea"></textarea><br><br>
+        <label>PALLETS ADEUDADOS (CD):</label><br>
+        <label for="secos">Secos:</label>
+        <input type="number" id="secos" name="secos"><br>
+        <label for="noa">NOA:</label>
+        <input type="number" id="noa" name="noa"><br>
+        <label for="refrigerados">Refrigerados:</label>
+        <input type="number" id="refrigerados" name="refrigerados"><br><br>
+        <label for="maestranza">MAESTRANZA:</label>
+        <textarea id="maestranza" name="maestranza" placeholder="Sin Novedad o detalles"></textarea><br><br>
+
+        <!-- Checkboxes para números de teléfono -->
+        <label>Seleccionar números de teléfono:</label><br>
+        <input type="checkbox" id="carlos" name="telefonoCheckbox" value="+5491154156494">
+        <label for="carlos">Carlos Acuña: +54 9 11 5415-6494</label><br>
+        <input type="checkbox" id="pablo" name="telefonoCheckbox" value="+5492616628535">
+        <label for="pablo">Pablo Managua: +54 9 261 662-8535</label><br>
+        <input type="checkbox" id="arielR" name="telefonoCheckbox" value="+5492613433260">
+        <label for="arielR">Ariel Rodríguez: +54 9 261 343-3260</label><br>
+        <input type="checkbox" id="exequiel" name="telefonoCheckbox" value="+5492617224497">
+        <label for="exequiel">BarrioNuevo Exequiel: +54 9 261 722-4497</label><br>
+        <input type="checkbox" id="mauricio" name="telefonoCheckbox" value="+5492612544608">
+        <label for="mauricio">Zúñiga Mauricio: +54 9 261 254-4608</label><br>
+  <input type="checkbox" id="arielS" name="telefonoCheckbox" value="+5492612095570">
+        <label for="arielS">Sack Ariel: +54 9 261 209-5570</label><br>
+
+        <label for="telefono">Número de Teléfono (Opcional, con código de país):</label>
+        <input type="tel" id="telefono" name="telefono" placeholder="Ej: 5491123456789"><br><br>
+    </form>
+    <button type="button" onclick="enviarWhatsApp()">Generar y Enviar por WhatsApp</button>
+    <button type="button" onclick="vaciarLocalStorage()">Vaciar Datos</button>
+    <script>
+        // Función para guardar los datos en localStorage
+        function guardarDatos() {
+            const formData = {
+                fecha: document.getElementById('fecha').value,
+                ausentismos: document.getElementById('ausentismos').value,
+                seguridad: document.getElementById('seguridad').value,
+                cctv: document.getElementById('cctv').value,
+                vts: document.getElementById('vts').value,
+                recepcion: document.getElementById('recepcion').value,
+                secos: document.getElementById('secos').value,
+                noa: document.getElementById('noa').value,
+                refrigerados: document.getElementById('refrigerados').value,
+                maestranza: document.getElementById('maestranza').value,
+                telefono: obtenerTelefonosSeleccionados() // Usar la función para obtener los teléfonos
+            };
+            localStorage.setItem('informeData', JSON.stringify(formData));
+        }
+
+        // Función para cargar los datos desde localStorage
+        function cargarDatos() {
+            const storedData = localStorage.getItem('informeData');
+            if (storedData) {
+                const formData = JSON.parse(storedData);
+                document.getElementById('fecha').value = formData.fecha || '';
+                document.getElementById('ausentismos').value = formData.ausentismos || '';
+                document.getElementById('seguridad').value = formData.seguridad || '';
+                document.getElementById('cctv').value = formData.cctv || '';
+                document.getElementById('vts').value = formData.vts || '';
+                document.getElementById('recepcion').value = formData.recepcion || '';
+                document.getElementById('secos').value = formData.secos || '';
+                document.getElementById('noa').value = formData.noa || '';
+                document.getElementById('refrigerados').value = formData.refrigerados || '';
+                document.getElementById('maestranza').value = formData.maestranza || '';
+
+                // Cargar los checkboxes
+                const telefonos = formData.telefono || [];
+                document.querySelectorAll('input[name="telefonoCheckbox"]').forEach(checkbox => {
+                    checkbox.checked = telefonos.includes(checkbox.value);
+                });
+                document.getElementById('telefono').value = formData.telefono || '';
+            }
+        }
+
+        // Función para vaciar localStorage
+        function vaciarLocalStorage() {
+            localStorage.removeItem('informeData');
+            alert('Datos borrados del almacenamiento local.');
+            document.getElementById('informeForm').reset();
+        }
+
+        //Función para obtener los números de teléfono seleccionados de los checkboxes
+        function obtenerTelefonosSeleccionados() {
+            const checkboxes = document.querySelectorAll('input[name="telefonoCheckbox"]:checked');
+            let telefonos = Array.from(checkboxes).map(checkbox => checkbox.value);
+   // Si hay un número en el campo de texto, lo agrega a la lista
+            const telefonoAdicional = document.getElementById('telefono').value;
+            if (telefonoAdicional) {
+                telefonos.push(telefonoAdicional);
+            }
+            return telefonos;
+        }
+
+        function enviarWhatsApp() {
+    const fecha = document.getElementById('fecha').value;
+    const ausentismos = document.getElementById('ausentismos').value.split('\n').filter(item => item.trim() !== '');
+    const seguridad = document.getElementById('seguridad').value.split('\n').filter(item => item.trim() !== '');
+    const cctv = document.getElementById('cctv').value.split('\n').filter(item => item.trim() !== '');
+    const vts = document.getElementById('vts').value.split('\n').filter(item => item.trim() !== '');
+    const recepcion = document.getElementById('recepcion').value.split('\n').filter(item => item.trim() !== '');
+    const secos = document.getElementById('secos').value;
+    const noa = document.getElementById('noa').value;
+    const refrigerados = document.getElementById('refrigerados').value;
+    const maestranza = document.getElementById('maestranza').value;
+    const telefonosSeleccionados = obtenerTelefonosSeleccionados();  // Obtiene los teléfonos seleccionados
+
+    let informe = `Informe de Seguridad ${fecha}\n\n`;
+
+    informe += 'AUSENTISMOS:\n';
+    ausentismos.forEach(item => informe += `- ${item}\n`);
+
+    informe += '\nSEGURIDAD:\n';
+    seguridad.forEach(item => informe += `- ${item}\n`);
+
+    if (cctv.length > 0) {
+        informe += '\n  CCTV:\n';
+        cctv.forEach(item => informe += `  - ${item}\n`);
+    }
+
+    if (vts.length > 0) {
+        informe += '\n  VTS:\n';
+        vts.forEach(item => informe += `  - ${item}\n`);
+    }
+
+    informe += '\nRECEPCIÓN:\n';
+    recepcion.forEach(item => informe += `- ${item}\n`);
+
+    informe += '\nPALLETS ADEUDADOS (CD):\n';
+    informe += `- Secos: ${secos}\n`;
+    informe += `- NOA: ${noa}\n`;
+    informe += `- Refrigerados: ${refrigerados}\n`;
+
+    informe += '\nMAESTRANZA:\n';
+    informe += maestranza ? `- ${maestranza}\n` : '- Sin Novedad\n';
+
+    if (telefonosSeleccionados.length > 0) {
+        telefonosSeleccionados.forEach(phoneNumber => {
+            let url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(informe)}`;
+            window.open(url, '_blank');
+        });
+    } else {
+        alert('Informe generado:\n\n' + informe);
+    }
+
+    guardarDatos();
+}
+        window.onload = cargarDatos;
+    </script>
+</body>
+
+</html>
