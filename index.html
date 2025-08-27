@@ -181,9 +181,12 @@
             return telefonos;
         }
 
-        function enviarWhatsApp() {
-const fechaISO = document.getElementById('fecha').value;
-const fecha = formatearFecha(fechaISO);   const ausentismos = document.getElementById('ausentismos').value.split('\n').filter(item => item.trim() !== '');
+        <script>
+function enviarWhatsApp() {
+    const fechaISO = document.getElementById('fecha').value;
+    const fecha = formatearFecha(fechaISO);
+
+    const ausentismos = document.getElementById('ausentismos').value.split('\n').filter(item => item.trim() !== '');
     const seguridad = document.getElementById('seguridad').value.split('\n').filter(item => item.trim() !== '');
     const cctv = document.getElementById('cctv').value.split('\n').filter(item => item.trim() !== '');
     const vts = document.getElementById('vts').value.split('\n').filter(item => item.trim() !== '');
@@ -192,48 +195,58 @@ const fecha = formatearFecha(fechaISO);   const ausentismos = document.getElemen
     const noa = document.getElementById('noa').value;
     const refrigerados = document.getElementById('refrigerados').value;
     const maestranza = document.getElementById('maestranza').value;
-    const telefonosSeleccionados = obtenerTelefonosSeleccionados();  // Obtiene los teléfonos seleccionados
+    const telefonosSeleccionados = obtenerTelefonosSeleccionados();
 
     let informe = `Informe de Seguridad ${fecha}\n\n`;
 
     informe += 'AUSENTISMOS:\n';
-    ausentismos.forEach(item => informe += `- ${item}\n`);
-
-    informe += '\nSEGURIDAD:\n';
-    seguridad.forEach(item => informe += `- ${item}\n`);
+    informe += ausentismos.length ? ausentismos.map(item => `- ${item}`).join("\n") : "- Sin Novedad";
+    informe += '\n\nSEGURIDAD:\n';
+    informe += seguridad.length ? seguridad.map(item => `- ${item}`).join("\n") : "- Sin Novedad";
 
     if (cctv.length > 0) {
-        informe += '\n  CCTV:\n';
-        cctv.forEach(item => informe += `  - ${item}\n`);
+        informe += '\n\nCCTV:\n';
+        informe += cctv.map(item => `- ${item}`).join("\n");
     }
 
     if (vts.length > 0) {
-        informe += '\n  VTS:\n';
-        vts.forEach(item => informe += `  - ${item}\n`);
+        informe += '\n\nVTS:\n';
+        informe += vts.map(item => `- ${item}`).join("\n");
     }
 
-    informe += '\nRECEPCIÓN:\n';
-    recepcion.forEach(item => informe += `- ${item}\n`);
+    informe += '\n\nRECEPCIÓN:\n';
+    informe += recepcion.length ? recepcion.map(item => `- ${item}`).join("\n") : "- Sin Novedad";
 
-    informe += '\nPALLETS ADEUDADOS (CD):\n';
-    informe += `- Secos: ${secos}\n`;
-    informe += `- NOA: ${noa}\n`;
-    informe += `- Refrigerados: ${refrigerados}\n`;
+    informe += '\n\nPALLETS ADEUDADOS (CD):\n';
+    informe += `- Secos: ${secos || 0}\n`;
+    informe += `- NOA: ${noa || 0}\n`;
+    informe += `- Refrigerados: ${refrigerados || 0}\n`;
 
     informe += '\nMAESTRANZA:\n';
-    informe += maestranza ? `- ${maestranza}\n` : '- Sin Novedad\n';
+    informe += maestranza ? `- ${maestranza}` : "- Sin Novedad";
+
+    console.log("INFORME GENERADO:");
+    console.log(informe);
 
     if (telefonosSeleccionados.length > 0) {
-        telefonosSeleccionados.forEach(phoneNumber => {
-            let url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(informe)}`;
+        let telefonoDestino = telefonosSeleccionados[0]; // por defecto, el primero
+        if (telefonosSeleccionados.length > 1) {
+            telefonoDestino = prompt(
+                "Selecciona el número al que deseas enviar:\n" + telefonosSeleccionados.join("\n"),
+                telefonosSeleccionados[0]
+            );
+        }
+        if (telefonoDestino) {
+            let url = `https://wa.me/${telefonoDestino}?text=${encodeURIComponent(informe)}`;
             window.open(url, '_blank');
-        });
+        }
     } else {
-        alert('Informe generado:\n\n' + informe);
+        alert('Informe generado (sin envío):\n\n' + informe);
     }
 
     guardarDatos();
 }
+</script>
         window.onload = cargarDatos;
     </script>
 </body>
