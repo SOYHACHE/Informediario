@@ -114,6 +114,11 @@
     <button type="button" onclick="enviarWhatsApp()">Generar y Enviar por WhatsApp</button>
     <button type="button" onclick="vaciarLocalStorage()">Vaciar Datos</button>
     <script>
+    function formatearFecha(fechaISO) {
+    if (!fechaISO) return "";
+    const partes = fechaISO.split("-"); // ["aaaa","mm","dd"]
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
         // Función para guardar los datos en localStorage
         function guardarDatos() {
             const formData = {
@@ -177,8 +182,8 @@
         }
 
         function enviarWhatsApp() {
-    const fecha = document.getElementById('fecha').value;
-    const ausentismos = document.getElementById('ausentismos').value.split('\n').filter(item => item.trim() !== '');
+const fechaISO = document.getElementById('fecha').value;
+const fecha = formatearFecha(fechaISO);   const ausentismos = document.getElementById('ausentismos').value.split('\n').filter(item => item.trim() !== '');
     const seguridad = document.getElementById('seguridad').value.split('\n').filter(item => item.trim() !== '');
     const cctv = document.getElementById('cctv').value.split('\n').filter(item => item.trim() !== '');
     const vts = document.getElementById('vts').value.split('\n').filter(item => item.trim() !== '');
