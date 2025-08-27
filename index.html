@@ -117,8 +117,8 @@
     function formatearFecha(fechaISO) {
     if (!fechaISO) return "";
     const partes = fechaISO.split("-"); // ["aaaa","mm","dd"]
-    return `${partes[2]}/${partes[1]}/${partes[0]}`;
-}
+    return `${partes[2]}/${partes[1]}/${partes[0]}`; // dd/mm/aaaa
+    }
         // Función para guardar los datos en localStorage
         function guardarDatos() {
             const formData = {
@@ -184,7 +184,7 @@
         <script>
 function enviarWhatsApp() {
     const fechaISO = document.getElementById('fecha').value;
-    const fecha = formatearFecha(fechaISO);
+const fecha = formatearFecha(fechaISO); // <-- ahora sí dd/mm/aaaa
 
     const ausentismos = document.getElementById('ausentismos').value.split('\n').filter(item => item.trim() !== '');
     const seguridad = document.getElementById('seguridad').value.split('\n').filter(item => item.trim() !== '');
