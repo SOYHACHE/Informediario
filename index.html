@@ -2,288 +2,267 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
-    <title>Generador de Informes de Seguridad</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <title>Generador de Informes de Seguridad</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
 
-        h1 {
-            text-align: center;
-        }
+    h1 {
+      text-align: center;
+      user-select: none; /* evita selección accidental al mantener presionado */
+    }
 
-        form {
-            max-width: 600px;
-            margin: 0 auto;
-        }
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+    }
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
 
-        input[type="text"],
-        input[type="date"],
-        input[type="number"],
-        textarea,
-        input[type="tel"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
 
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 5px;
-        }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
-        button:hover {
-            background-color: #3e8e41;
-        }
-
-        #informeGenerado {
-            margin-top: 20px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            border-radius: 4px;
-        }
-
-        #informeTexto {
-            width: 100%;
-            box-sizing: border-box;
-            white-space: pre-wrap;
-        }
-    </style>
+    button:hover {
+      background-color: #3e8e41;
+    }
+  </style>
 </head>
 
 <body>
-    <h1>Generador de Informes de Seguridad</h1>
-    <form id="informeForm">
-        <label for="fecha">Fecha del Informe:</label>
-        <input type="date" id="fecha" name="fecha" required><br><br>
+  <h1>Generador de Informes de Seguridad</h1>
 
-        <label for="ausentismos">AUSENTISMOS:</label>
-        <textarea id="ausentismos" name="ausentismos" placeholder="Ingrese cada nombre en una línea"></textarea><br><br>
+  <form id="informeForm">
+    <label for="fecha">Fecha del Informe:</label>
+    <input type="date" id="fecha" name="fecha" required><br><br>
 
-        <label for="seguridad">SEGURIDAD:</label>
-        <textarea id="seguridad" name="seguridad" placeholder="Ingrese cada punto en una línea"></textarea><br><br>
+    <label for="ausentismos">AUSENTISMOS:</label>
+    <textarea id="ausentismos" name="ausentismos" placeholder="Ingrese cada nombre en una línea"></textarea><br><br>
 
-        <label for="cctv">CCTV:</label>
-        <textarea id="cctv" name="cctv" placeholder="Ingrese cada punto en una línea"></textarea><br><br>
+    <label for="seguridad">SEGURIDAD:</label>
+    <textarea id="seguridad" name="seguridad" placeholder="Ingrese cada punto en una línea"></textarea><br><br>
 
-        <label for="vts">VTS:</label>
-        <textarea id="vts" name="vts" placeholder="Ingrese cada punto en una línea"></textarea><br><br>
+    <label for="cctv">CCTV:</label>
+    <textarea id="cctv" name="cctv" placeholder="Ingrese cada punto en una línea"></textarea><br><br>
 
-        <label for="recepcion">RECEPCIÓN:</label>
-        <textarea id="recepcion" name="recepcion" placeholder="Ingrese cada punto en una línea"></textarea><br><br>
+    <label for="vts">VTS:</label>
+    <textarea id="vts" name="vts" placeholder="Ingrese cada punto en una línea"></textarea><br><br>
 
-        <!-- PORCENTAJES (simple, sin recuadro) -->
-        <label for="suc">PORCENTAJE - SUC:</label>
-        <input type="number" id="suc" name="suc" step="0.1"><br>
-        <label for="media">PORCENTAJE - MEDIA:</label>
-        <input type="number" id="media" name="media" step="0.1"><br><br>
+    <label for="recepcion">RECEPCIÓN:</label>
+    <textarea id="recepcion" name="recepcion" placeholder="Ingrese cada punto en una línea"></textarea><br><br>
 
-        <label>PALLETS ADEUDADOS (CD):</label><br>
-        <label for="secos">Secos:</label>
-        <input type="number" id="secos" name="secos"><br>
-        <label for="noa">NOA:</label>
-        <input type="number" id="noa" name="noa"><br>
-        <label for="refrigerados">Refrigerados:</label>
-        <input type="number" id="refrigerados" name="refrigerados"><br><br>
+    <!-- Nuevo ítem PORCENTAJES -->
+    <label>PORCENTAJES:</label><br>
+    <label for="suc">SUC:</label>
+    <input type="number" id="suc" name="suc" step="0.1"><br>
+    <label for="media">MEDIA:</label>
+    <input type="number" id="media" name="media" step="0.1"><br><br>
 
-        <label for="maestranza">MAESTRANZA:</label>
-        <textarea id="maestranza" name="maestranza" placeholder="Sin Novedad o detalles"></textarea><br><br>
+    <label>PALLETS ADEUDADOS (CD):</label><br>
+    <label for="secos">Secos:</label>
+    <input type="number" id="secos" name="secos"><br>
+    <label for="noa">NOA:</label>
+    <input type="number" id="noa" name="noa"><br>
+    <label for="refrigerados">Refrigerados:</label>
+    <input type="number" id="refrigerados" name="refrigerados"><br><br>
 
-        <!-- Checkboxes para números de teléfono -->
-        <label>Seleccionar números de teléfono:</label><br>
-        <input type="checkbox" id="gerente" name="telefonoCheckbox" value="+5491161269473">
-        <label for="gerente">Gerente: +54 9 11 6126-9473</label><br>
-        <input type="checkbox" id="carlos" name="telefonoCheckbox" value="+5491154156494">
-        <label for="carlos">Carlos Acuña: +54 9 11 5415-6494</label><br>
-        <input type="checkbox" id="pablo" name="telefonoCheckbox" value="+5492616628535">
-        <label for="pablo">Pablo Managua: +54 9 261 662-8535</label><br>
-        <input type="checkbox" id="arielR" name="telefonoCheckbox" value="+5492613433260">
-        <label for="arielR">Ariel Rodríguez: +54 9 261 343-3260</label><br>
-        <input type="checkbox" id="exequiel" name="telefonoCheckbox" value="+5492617224497">
-        <label for="exequiel">BarrioNuevo Exequiel: +54 9 261 722-4497</label><br>
-        <input type="checkbox" id="mauricio" name="telefonoCheckbox" value="+5492612544608">
-        <label for="mauricio">Zúñiga Mauricio: +54 9 261 254-4608</label><br>
-        <input type="checkbox" id="arielS" name="telefonoCheckbox" value="+5492612095570">
-        <label for="arielS">Sack Ariel: +54 9 261 209-5570</label><br>
+    <label for="maestranza">MAESTRANZA:</label>
+    <textarea id="maestranza" name="maestranza" placeholder="Sin Novedad o detalles"></textarea><br><br>
 
-        <label for="telefono">Número de Teléfono (Opcional, con código de país):</label>
-        <input type="tel" id="telefono" name="telefono" placeholder="Ej: 5491123456789"><br><br>
-    </form>
+    <!-- Checkboxes para números de teléfono -->
+    <label>Seleccionar números de teléfono:</label><br>
+    <input type="checkbox" id="gerente" name="telefonoCheckbox" value="+5491161269473">
+    <label for="gerente">Gerente: +54 9 11 6126-9473</label><br>
+    <input type="checkbox" id="carlos" name="telefonoCheckbox" value="+5491154156494">
+    <label for="carlos">Carlos Acuña: +54 9 11 5415-6494</label><br>
+    <input type="checkbox" id="pablo" name="telefonoCheckbox" value="+5492616628535">
+    <label for="pablo">Pablo Managua: +54 9 261 662-8535</label><br>
+    <input type="checkbox" id="arielR" name="telefonoCheckbox" value="+5492613433260">
+    <label for="arielR">Ariel Rodríguez: +54 9 261 343-3260</label><br>
+    <input type="checkbox" id="exequiel" name="telefonoCheckbox" value="+5492617224497">
+    <label for="exequiel">BarrioNuevo Exequiel: +54 9 261 722-4497</label><br>
+    <input type="checkbox" id="mauricio" name="telefonoCheckbox" value="+5492612544608">
+    <label for="mauricio">Zúñiga Mauricio: +54 9 261 254-4608</label><br>
+    <input type="checkbox" id="arielS" name="telefonoCheckbox" value="+5492612095570">
+    <label for="arielS">Sack Ariel: +54 9 261 209-5570</label><br>
 
-    <button type="button" onclick="enviarWhatsApp()">Generar y Enviar por WhatsApp</button>
-    <button type="button" onclick="vaciarLocalStorage()">Vaciar Datos</button>
+    <label for="telefono">Número de Teléfono (Opcional, con código de país):</label>
+    <input type="tel" id="telefono" name="telefono" placeholder="Ej: 5491123456789"><br><br>
+  </form>
 
-    <div id="informeGenerado">
-        <pre id="informeTexto"></pre>
-    </div>
+  <button type="button" onclick="enviarWhatsApp()">Generar y Enviar por WhatsApp</button>
+  <button type="button" onclick="vaciarLocalStorage()">Vaciar Datos</button>
 
-    <script>
-        function formatearFecha(fechaISO) {
-            if (!fechaISO) return "";
-            const partes = fechaISO.split("-");
-            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+  <script>
+    function formatearFecha(fechaISO) {
+      if (!fechaISO) return "";
+      const partes = fechaISO.split("-");
+      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+    function guardarDatos() {
+      const formData = {
+        fecha: document.getElementById('fecha').value,
+        ausentismos: document.getElementById('ausentismos').value,
+        seguridad: document.getElementById('seguridad').value,
+        cctv: document.getElementById('cctv').value,
+        vts: document.getElementById('vts').value,
+        recepcion: document.getElementById('recepcion').value,
+        suc: document.getElementById('suc').value,
+        media: document.getElementById('media').value,
+        secos: document.getElementById('secos').value,
+        noa: document.getElementById('noa').value,
+        refrigerados: document.getElementById('refrigerados').value,
+        maestranza: document.getElementById('maestranza').value,
+        telefonosCheckbox: obtenerCheckboxSeleccionados(),
+        telefonoManual: document.getElementById('telefono').value
+      };
+      localStorage.setItem('informeData', JSON.stringify(formData));
+    }
+
+    function cargarDatos() {
+      const storedData = localStorage.getItem('informeData');
+      if (storedData) {
+        const formData = JSON.parse(storedData);
+        document.getElementById('fecha').value = formData.fecha || '';
+        document.getElementById('ausentismos').value = formData.ausentismos || '';
+        document.getElementById('seguridad').value = formData.seguridad || '';
+        document.getElementById('cctv').value = formData.cctv || '';
+        document.getElementById('vts').value = formData.vts || '';
+        document.getElementById('recepcion').value = formData.recepcion || '';
+        document.getElementById('suc').value = formData.suc || '';
+        document.getElementById('media').value = formData.media || '';
+        document.getElementById('secos').value = formData.secos || '';
+        document.getElementById('noa').value = formData.noa || '';
+        document.getElementById('refrigerados').value = formData.refrigerados || '';
+        document.getElementById('maestranza').value = formData.maestranza || '';
+
+        document.querySelectorAll('input[name="telefonoCheckbox"]').forEach(cb => {
+          cb.checked = formData.telefonosCheckbox?.includes(cb.value);
+        });
+        document.getElementById('telefono').value = formData.telefonoManual || '';
+      }
+    }
+
+    function vaciarLocalStorage() {
+      localStorage.removeItem('informeData');
+      alert('Datos borrados del almacenamiento local.');
+      document.getElementById('informeForm').reset();
+    }
+
+    function obtenerCheckboxSeleccionados() {
+      return Array.from(document.querySelectorAll('input[name="telefonoCheckbox"]:checked'))
+        .map(cb => cb.value);
+    }
+
+    function obtenerTelefonosSeleccionados() {
+      let telefonos = obtenerCheckboxSeleccionados();
+      const manual = document.getElementById('telefono').value;
+      if (manual) telefonos.push(manual);
+      return telefonos;
+    }
+
+    function enviarWhatsApp() {
+      const fecha = formatearFecha(document.getElementById('fecha').value);
+      const ausentismos = document.getElementById('ausentismos').value.split('\n').filter(x => x.trim() !== '');
+      const seguridad = document.getElementById('seguridad').value.split('\n').filter(x => x.trim() !== '');
+      const cctv = document.getElementById('cctv').value.split('\n').filter(x => x.trim() !== '');
+      const vts = document.getElementById('vts').value.split('\n').filter(x => x.trim() !== '');
+      const recepcion = document.getElementById('recepcion').value.split('\n').filter(x => x.trim() !== '');
+      const suc = document.getElementById('suc').value;
+      const media = document.getElementById('media').value;
+      const secos = document.getElementById('secos').value;
+      const noa = document.getElementById('noa').value;
+      const refrigerados = document.getElementById('refrigerados').value;
+      const maestranza = document.getElementById('maestranza').value;
+      const telefonosSeleccionados = obtenerTelefonosSeleccionados();
+
+      let informe = `Informe de Seguridad ${fecha}\n\n`;
+
+      informe += 'AUSENTISMOS:\n';
+      informe += ausentismos.length ? ausentismos.map(x => `- ${x}`).join("\n") : "- Sin Novedad";
+
+      informe += '\n\nSEGURIDAD:\n';
+      informe += seguridad.length ? seguridad.map(x => `- ${x}`).join("\n") : "- Sin Novedad";
+
+      if (cctv.length > 0) {
+        informe += '\n\nCCTV:\n' + cctv.map(x => `- ${x}`).join("\n");
+      }
+      if (vts.length > 0) {
+        informe += '\n\nVTS:\n' + vts.map(x => `- ${x}`).join("\n");
+      }
+
+      informe += '\n\nRECEPCIÓN:\n';
+      informe += recepcion.length ? recepcion.map(x => `- ${x}`).join("\n") : "- Sin Novedad";
+
+      if (suc || media) {
+        informe += '\n\nPORCENTAJES:\n';
+        if (suc) informe += `- SUC: ${suc}%\n`;
+        if (media) informe += `- MEDIA: ${media}%`;
+      }
+
+      informe += '\n\nPALLETS ADEUDADOS (CD):\n';
+      informe += `- Secos: ${secos || 0}\n- NOA: ${noa || 0}\n- Refrigerados: ${refrigerados || 0}`;
+
+      informe += '\n\nMAESTRANZA:\n';
+      informe += maestranza ? `- ${maestranza}` : "- Sin Novedad";
+
+      if (telefonosSeleccionados.length > 0) {
+        let telefonoDestino = telefonosSeleccionados[0];
+        if (telefonosSeleccionados.length > 1) {
+          telefonoDestino = prompt("Selecciona el número:\n" + telefonosSeleccionados.join("\n"), telefonosSeleccionados[0]);
         }
-
-        function guardarDatos() {
-            const formData = {
-                fecha: document.getElementById('fecha').value,
-                ausentismos: document.getElementById('ausentismos').value,
-                seguridad: document.getElementById('seguridad').value,
-                cctv: document.getElementById('cctv').value,
-                vts: document.getElementById('vts').value,
-                recepcion: document.getElementById('recepcion').value,
-                suc: document.getElementById('suc').value,
-                media: document.getElementById('media').value,
-                secos: document.getElementById('secos').value,
-                noa: document.getElementById('noa').value,
-                refrigerados: document.getElementById('refrigerados').value,
-                maestranza: document.getElementById('maestranza').value,
-                telefonosCheckbox: obtenerCheckboxSeleccionados(),
-                telefonoManual: document.getElementById('telefono').value
-            };
-            localStorage.setItem('informeData', JSON.stringify(formData));
+        if (telefonoDestino) {
+          let url = `https://wa.me/${telefonoDestino}?text=${encodeURIComponent(informe)}`;
+          window.open(url, '_blank');
         }
+      } else {
+        alert('Informe generado (sin envío):\n\n' + informe);
+      }
 
-        function cargarDatos() {
-            const storedData = localStorage.getItem('informeData');
-            if (storedData) {
-                const formData = JSON.parse(storedData);
-                document.getElementById('fecha').value = formData.fecha || '';
-                document.getElementById('ausentismos').value = formData.ausentismos || '';
-                document.getElementById('seguridad').value = formData.seguridad || '';
-                document.getElementById('cctv').value = formData.cctv || '';
-                document.getElementById('vts').value = formData.vts || '';
-                document.getElementById('recepcion').value = formData.recepcion || '';
-                document.getElementById('suc').value = formData.suc || '';
-                document.getElementById('media').value = formData.media || '';
-                document.getElementById('secos').value = formData.secos || '';
-                document.getElementById('noa').value = formData.noa || '';
-                document.getElementById('refrigerados').value = formData.refrigerados || '';
-                document.getElementById('maestranza').value = formData.maestranza || '';
+      guardarDatos();
+    }
 
-                document.querySelectorAll('input[name="telefonoCheckbox"]').forEach(cb => {
-                    cb.checked = formData.telefonosCheckbox?.includes(cb.value);
-                });
-                document.getElementById('telefono').value = formData.telefonoManual || '';
-            }
-        }
+    window.onload = cargarDatos;
 
-        function vaciarLocalStorage() {
-            localStorage.removeItem('informeData');
-            alert('Datos borrados del almacenamiento local.');
-            document.getElementById('informeForm').reset();
-            document.getElementById('informeTexto').textContent = '';
-        }
-
-        function obtenerCheckboxSeleccionados() {
-            return Array.from(document.querySelectorAll('input[name="telefonoCheckbox"]:checked'))
-                .map(cb => cb.value);
-        }
-
-        function obtenerTelefonosSeleccionados() {
-            let telefonos = obtenerCheckboxSeleccionados();
-            const telefonoAdicional = document.getElementById('telefono').value;
-            if (telefonoAdicional) {
-                telefonos.push(telefonoAdicional);
-            }
-            return telefonos;
-        }
-
-        function enviarWhatsApp() {
-            const fechaISO = document.getElementById('fecha').value;
-            const fecha = formatearFecha(fechaISO);
-
-            const ausentismos = document.getElementById('ausentismos').value.split('\n').filter(i => i.trim() !== '');
-            const seguridad = document.getElementById('seguridad').value.split('\n').filter(i => i.trim() !== '');
-            const cctv = document.getElementById('cctv').value.split('\n').filter(i => i.trim() !== '');
-            const vts = document.getElementById('vts').value.split('\n').filter(i => i.trim() !== '');
-            const recepcion = document.getElementById('recepcion').value.split('\n').filter(i => i.trim() !== '');
-            const suc = document.getElementById('suc').value;
-            const media = document.getElementById('media').value;
-            const secos = document.getElementById('secos').value;
-            const noa = document.getElementById('noa').value;
-            const refrigerados = document.getElementById('refrigerados').value;
-            const maestranza = document.getElementById('maestranza').value;
-            const telefonosSeleccionados = obtenerTelefonosSeleccionados();
-
-            let informe = `Informe de Seguridad ${fecha}\n\n`;
-
-            informe += 'AUSENTISMOS:\n';
-            informe += ausentismos.length ? ausentismos.map(item => `- ${item}`).join("\n") : "- Sin Novedad";
-
-            informe += '\n\nSEGURIDAD:\n';
-            informe += seguridad.length ? seguridad.map(item => `- ${item}`).join("\n") : "- Sin Novedad";
-
-            if (cctv.length > 0) {
-                informe += '\n\nCCTV:\n' + cctv.map(item => `- ${item}`).join("\n");
-            }
-
-            if (vts.length > 0) {
-                informe += '\n\nVTS:\n' + vts.map(item => `- ${item}`).join("\n");
-            }
-
-            informe += '\n\nRECEPCIÓN:\n';
-            informe += recepcion.length ? recepcion.map(item => `- ${item}`).join("\n") : "- Sin Novedad";
-
-            if (suc || media) {
-                informe += '\n\nPORCENTAJES:\n';
-                if (suc) informe += `  SUC: ${suc}%\n`;
-                if (media) informe += `  MEDIA: ${media}%\n`;
-            }
-
-            informe += '\n\nPALLETS ADEUDADOS (CD):\n';
-            informe += `- Secos: ${secos || 0}\n`;
-            informe += `- NOA: ${noa || 0}\n`;
-            informe += `- Refrigerados: ${refrigerados || 0}\n`;
-
-            informe += '\nMAESTRANZA:\n';
-            informe += maestranza ? `- ${maestranza}` : "- Sin Novedad";
-
-            document.getElementById("informeTexto").textContent = informe;
-
-            if (telefonosSeleccionados.length > 0) {
-                let telefonoDestino = telefonosSeleccionados[0];
-                if (telefonosSeleccionados.length > 1) {
-                    telefonoDestino = prompt(
-                        "Selecciona el número al que deseas enviar:\n" + telefonosSeleccionados.join("\n"),
-                        telefonosSeleccionados[0]
-                    );
-                }
-                if (telefonoDestino) {
-                    let url = `https://wa.me/${telefonoDestino}?text=${encodeURIComponent(informe)}`;
-                    window.open(url, '_blank');
-                }
-            } else {
-                alert('Informe generado (sin envío):\n\n' + informe);
-            }
-
-            guardarDatos();
-        }
-
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("service-worker.js")
-                .then(() => console.log("Service Worker registrado"))
-                .catch(err => console.error("Error registrando SW:", err));
-        }
-
-        window.onload = cargarDatos;
-    </script>
+    // 🔐 Función oculta: borrar datos con un tap largo en el título
+    const titulo = document.querySelector("h1");
+    let presionado;
+    titulo.addEventListener("touchstart", () => {
+      presionado = setTimeout(() => {
+        localStorage.removeItem("informeData");
+        alert("✅ Datos borrados (función oculta).");
+      }, 2000); // 2 segundos
+    });
+    titulo.addEventListener("touchend", () => {
+      clearTimeout(presionado);
+    });
+  </script>
 </body>
+
 </html>
