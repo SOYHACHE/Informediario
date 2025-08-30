@@ -14,7 +14,13 @@
 
     h1 {
       text-align: center;
-      user-select: none; /* evita selección accidental al mantener presionado */
+      user-select: none;           /* evita selección de texto */
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -webkit-touch-callout: none; /* evita menú contextual en iOS */
+      touch-action: manipulation;  /* optimiza gestos en algunos navegadores */
+      cursor: default;
     }
 
     form {
@@ -250,17 +256,37 @@
 
     window.onload = cargarDatos;
 
-    // 🔐 Función oculta: borrar datos con un tap largo en el título
+    // 🔐 Función oculta: tap largo 2s sobre el título (Android / desktop)
     const titulo = document.querySelector("h1");
-    let presionado;
-    titulo.addEventListener("touchstart", () => {
-      presionado = setTimeout(() => {
-        localStorage.removeItem("informeData");
-        alert("✅ Datos borrados (función oculta).");
-      }, 2000); // 2 segundos
+    let presionadoTimer = null;
+
+    function activarBorradoOculto() {
+      localStorage.removeItem("informeData");
+      alert("✅ Datos borrados (función oculta).");
+    }
+
+    // TOUCH (Android)
+    titulo.addEventListener("touchstart", function(e) {
+      e.preventDefault(); // evita selección / menú contextual
+      presionadoTimer = setTimeout(activarBorradoOculto, 2000);
+    }, { passive: false });
+
+    titulo.addEventListener("touchend", function() {
+      clearTimeout(presionadoTimer);
     });
-    titulo.addEventListener("touchend", () => {
-      clearTimeout(presionado);
+
+    // MOUSE (desktop / WebView)
+    titulo.addEventListener("mousedown", function(e) {
+      e.preventDefault();
+      presionadoTimer = setTimeout(activarBorradoOculto, 2000);
+    });
+
+    titulo.addEventListener("mouseup", function() {
+      clearTimeout(presionadoTimer);
+    });
+
+    titulo.addEventListener("mouseleave", function() {
+      clearTimeout(presionadoTimer);
     });
   </script>
 </body>
