@@ -83,7 +83,7 @@
 
 <h1>Generador de Informes de Seguridad</h1>
 
-<form id="informeForm">
+<form id="informeForm" oninput="autoGuardar()">
 
   <label>Fecha:</label>
   <input type="date" id="fecha" required>
@@ -164,6 +164,27 @@ function calcularDiferencia() {
   changosDiferencia.textContent = `Diferencia: ${f - t}`;
 }
 
+function autoGuardar() {
+  localStorage.setItem("informe", JSON.stringify({
+    fecha: fecha.value,
+    ausentismos: ausentismos.value,
+    seguridad: seguridad.value,
+    changosFisico: changosFisico.value,
+    changosTeorico: changosTeorico.value,
+    cctv: cctv.value,
+    vts: vts.value,
+    recepcion: recepcion.value,
+    suc: suc.value,
+    media: media.value,
+    totalPallets: totalPallets.value,
+    secos: secos.value,
+    noa: noa.value,
+    refrigerados: refrigerados.value,
+    maestranza: maestranza.value,
+    telefono: telefono.value
+  }));
+}
+
 function obtenerTelefonos() {
   let tels = [...document.querySelectorAll('input[type="checkbox"]:checked')]
     .map(cb => cb.value);
@@ -206,23 +227,6 @@ function enviarWhatsApp() {
   bloque("VTS", vts.value);
   bloque("RECEPCIÓN", recepcion.value);
 
-  if (suc.value || media.value) {
-    informe += "PORCENTAJES:\n";
-    if (suc.value) informe += `- SUC: ${suc.value}%\n`;
-    if (media.value) informe += `- MEDIA: ${media.value}%\n`;
-    informe += "\n";
-  }
-
-  informe += `PALLETS ADEUDADOS (CD)${totalPallets.value ? " " + totalPallets.value : ""}:\n`;
-  let p = [];
-  if (secos.value) p.push(`- Secos: ${secos.value}`);
-  if (noa.value) p.push(`- NOA: ${noa.value}`);
-  if (refrigerados.value) p.push(`- Refrigerados: ${refrigerados.value}`);
-  informe += p.length ? p.join("\n") : "- Sin Novedad";
-
-  informe += "\n\nMAESTRANZA:\n";
-  informe += maestranza.value ? "- " + maestranza.value : "- Sin Novedad";
-
   let tels = obtenerTelefonos();
   if (!tels.length) return alert(informe);
 
@@ -231,28 +235,6 @@ function enviarWhatsApp() {
     : tels[0];
 
   if (tel) window.open(`https://wa.me/${tel}?text=${encodeURIComponent(informe)}`);
-  guardar();
-}
-
-function guardar() {
-  localStorage.setItem("informe", JSON.stringify({
-    fecha: fecha.value,
-    ausentismos: ausentismos.value,
-    seguridad: seguridad.value,
-    changosFisico: changosFisico.value,
-    changosTeorico: changosTeorico.value,
-    cctv: cctv.value,
-    vts: vts.value,
-    recepcion: recepcion.value,
-    suc: suc.value,
-    media: media.value,
-    totalPallets: totalPallets.value,
-    secos: secos.value,
-    noa: noa.value,
-    refrigerados: refrigerados.value,
-    maestranza: maestranza.value,
-    telefono: telefono.value
-  }));
 }
 
 function vaciar() {
