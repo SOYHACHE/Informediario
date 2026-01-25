@@ -14,7 +14,6 @@
     h1 {
       text-align: center;
       user-select: none;
-      cursor: default;
     }
 
     form {
@@ -52,13 +51,11 @@
       background-color: #3e8e41;
     }
 
-    /* Teléfonos */
     .telefono-item {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 6px;
-      font-weight: normal;
     }
 
     .telefono-item input {
@@ -66,17 +63,16 @@
       margin: 0;
     }
 
-    /* Balance changos */
-    .balance-row {
+    .balance {
       display: flex;
       gap: 10px;
     }
 
-    .balance-row input {
-      width: 100%;
+    .balance input {
+      flex: 1;
     }
 
-    .diferencia {
+    #changosDiferencia {
       font-weight: bold;
       margin-bottom: 10px;
     }
@@ -98,17 +94,12 @@
   <label>SEGURIDAD:</label>
   <textarea id="seguridad"></textarea>
 
-  <!-- 🆕 BALANCE DE CHANGOS -->
   <label>BALANCE DE CHANGOS:</label>
-
-  <div class="balance-row">
-    <input type="number" id="changosFisico" placeholder="Cantidad física">
-    <input type="number" id="changosTeorico" placeholder="Cantidad teórica">
+  <div class="balance">
+    <input type="number" id="changosFisico" placeholder="Físico" oninput="calcularDiferencia()">
+    <input type="number" id="changosTeorico" placeholder="Teórico" oninput="calcularDiferencia()">
   </div>
-
-  <div class="diferencia" id="changosDiferencia">
-    Diferencia: 0
-  </div>
+  <div id="changosDiferencia"></div>
 
   <label>CCTV:</label>
   <textarea id="cctv"></textarea>
@@ -135,17 +126,17 @@
   <label>Seleccionar teléfonos:</label>
 
   <label class="telefono-item">
-    <input type="checkbox" name="telefonoCheckbox" value="5491154156494">
+    <input type="checkbox" value="5491154156494">
     <span>Jefe de Seguridad</span>
   </label>
 
   <label class="telefono-item">
-    <input type="checkbox" name="telefonoCheckbox" value="5491132560237">
+    <input type="checkbox" value="5491132560237">
     <span>Activador</span>
   </label>
 
   <label class="telefono-item">
-    <input type="checkbox" name="telefonoCheckbox" value="5492617224497">
+    <input type="checkbox" value="5492617224497">
     <span>BarrioNuevo</span>
   </label>
 
@@ -163,19 +154,18 @@ function formatearFecha(f) {
   return `${p[2]}/${p[1]}/${p[0]}`;
 }
 
-/* 🧮 Cálculo automático */
 function calcularDiferencia() {
   const f = parseInt(changosFisico.value) || 0;
   const t = parseInt(changosTeorico.value) || 0;
-  const diff = f - t;
-  changosDiferencia.textContent = `Diferencia: ${diff}`;
+  if (!changosFisico.value && !changosTeorico.value) {
+    changosDiferencia.textContent = "";
+    return;
+  }
+  changosDiferencia.textContent = `Diferencia: ${f - t}`;
 }
 
-changosFisico.oninput = calcularDiferencia;
-changosTeorico.oninput = calcularDiferencia;
-
-function obtenerTelefonosSeleccionados() {
-  let tels = [...document.querySelectorAll('input[name="telefonoCheckbox"]:checked')]
+function obtenerTelefonos() {
+  let tels = [...document.querySelectorAll('input[type="checkbox"]:checked')]
     .map(cb => cb.value);
 
   let manual = telefono.value.trim();
@@ -194,17 +184,23 @@ function enviarWhatsApp() {
 
   function bloque(titulo, txt) {
     informe += `${titulo}:\n`;
-    informe += txt ? txt.split("\n").filter(x=>x.trim()).map(x=>`- ${x}`).join("\n") : "- Sin Novedad";
+    informe += txt
+      ? txt.split("\n").filter(x => x.trim()).map(x => `- ${x}`).join("\n")
+      : "- Sin Novedad";
     informe += "\n\n";
   }
 
   bloque("AUSENTISMOS", ausentismos.value);
   bloque("SEGURIDAD", seguridad.value);
 
-  informe += "BALANCE DE CHANGOS:\n";
-  informe += `- Físico: ${changosFisico.value || 0}\n`;
-  informe += `- Teórico: ${changosTeorico.value || 0}\n`;
-  informe += `- Diferencia: ${(parseInt(changosFisico.value)||0)-(parseInt(changosTeorico.value)||0)}\n\n`;
+  if (changosFisico.value || changosTeorico.value) {
+    const f = parseInt(changosFisico.value) || 0;
+    const t = parseInt(changosTeorico.value) || 0;
+    informe += "BALANCE DE CHANGOS:\n";
+    if (changosFisico.value) informe += `- Físico: ${f}\n`;
+    if (changosTeorico.value) informe += `- Teórico: ${t}\n`;
+    informe += `- Diferencia: ${f - t}\n\n`;
+  }
 
   bloque("CCTV", cctv.value);
   bloque("VTS", vts.value);
@@ -217,20 +213,23 @@ function enviarWhatsApp() {
     informe += "\n";
   }
 
-  informe += `PALLETS ADEUDADOS (CD)${totalPallets.value ? " "+totalPallets.value : ""}:\n`;
-  let p=[];
+  informe += `PALLETS ADEUDADOS (CD)${totalPallets.value ? " " + totalPallets.value : ""}:\n`;
+  let p = [];
   if (secos.value) p.push(`- Secos: ${secos.value}`);
   if (noa.value) p.push(`- NOA: ${noa.value}`);
   if (refrigerados.value) p.push(`- Refrigerados: ${refrigerados.value}`);
   informe += p.length ? p.join("\n") : "- Sin Novedad";
 
   informe += "\n\nMAESTRANZA:\n";
-  informe += maestranza.value ? "- "+maestranza.value : "- Sin Novedad";
+  informe += maestranza.value ? "- " + maestranza.value : "- Sin Novedad";
 
-  let tels = obtenerTelefonosSeleccionados();
+  let tels = obtenerTelefonos();
   if (!tels.length) return alert(informe);
 
-  let tel = tels.length > 1 ? prompt("Elegí número:\n"+tels.join("\n"),tels[0]) : tels[0];
+  let tel = tels.length > 1
+    ? prompt("Elegí número:\n" + tels.join("\n"), tels[0])
+    : tels[0];
+
   if (tel) window.open(`https://wa.me/${tel}?text=${encodeURIComponent(informe)}`);
   guardar();
 }
@@ -259,7 +258,7 @@ function guardar() {
 function vaciar() {
   localStorage.removeItem("informe");
   informeForm.reset();
-  changosDiferencia.textContent = "Diferencia: 0";
+  changosDiferencia.textContent = "";
 }
 
 window.onload = () => {
