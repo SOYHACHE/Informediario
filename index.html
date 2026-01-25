@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Generador de Informes de Seguridad</title>
 
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4CAF50">
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -157,10 +161,12 @@ function formatearFecha(f) {
 function calcularDiferencia() {
   const f = parseInt(changosFisico.value) || 0;
   const t = parseInt(changosTeorico.value) || 0;
+
   if (!changosFisico.value && !changosTeorico.value) {
     changosDiferencia.textContent = "";
     return;
   }
+
   changosDiferencia.textContent = `Diferencia: ${f - t}`;
 }
 
@@ -252,6 +258,15 @@ window.onload = () => {
   calcularDiferencia();
   if (!fecha.value) fecha.value = new Date().toISOString().split("T")[0];
 };
+</script>
+
+<!-- Registro Service Worker -->
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js");
+  });
+}
 </script>
 
 </body>
