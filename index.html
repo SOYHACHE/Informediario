@@ -258,10 +258,13 @@ document.getElementById("enviar").onclick = () => {
 
   const tels = obtenerTelefonos();
   if (!tels.length) return alert(msg);
+if (tels.length > 1) {
+  alert("Seleccioná solo un destinatario para enviar el WhatsApp");
+  return;
+}
 
-  const tel = tels.length > 1 ? prompt("Elegí número:\n"+tels.join("\n"), tels[0]) : tels[0];
-  if (tel) window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`);
-};
+const tel = tels[0];
+window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`);
 
 /* =================== VACIAR =================== */
 document.getElementById("vaciar").onclick = () => {
