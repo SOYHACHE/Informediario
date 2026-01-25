@@ -1,127 +1,244 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Informe de Seguridad</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Informes de Seguridad</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#4CAF50">
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4CAF50">
 
-<style>
-body { font-family: Arial, sans-serif; padding: 15px; }
-h2 { margin-top: 25px; }
-
-.row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-
-input[type="number"], input[type="text"] {
-  padding: 6px;
-  width: 120px;
-}
-
-button {
-  padding: 10px;
-  margin-top: 10px;
-  width: 100%;
-}
-</style>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 15px;
+      background: #f4f4f4;
+    }
+    h1 { text-align: center; }
+    form {
+      max-width: 650px;
+      margin: auto;
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    label { font-weight: bold; margin-top: 10px; display: block; }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    textarea { min-height: 70px; }
+    .fila { display: flex; gap: 10px; }
+    .fila input { flex: 1; }
+    .telefono-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 5px;
+    }
+    .telefono-item input { width: auto; }
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: white;
+    }
+    #enviar { background: #4CAF50; }
+    #vaciar { background: #e74c3c; }
+    #changosDiferencia { font-weight: bold; margin-top: 5px; }
+  </style>
 </head>
 
 <body>
 
-<h2>Pallet adeudados <input type="number" id="pallets" min="0"></h2>
+<h1>Generador de Informes de Seguridad</h1>
 
-<h2>Seguridad</h2>
-<textarea id="seguridad" rows="4" style="width:100%"></textarea>
+<form id="form">
 
-<h2>Balance de changos</h2>
-<div class="row">
-  Físico <input type="number" id="changosFisico">
-  Teórico <input type="number" id="changosTeorico">
-</div>
-<div id="changosResultado"></div>
+  <label>Fecha:</label>
+  <input type="date" id="fecha">
 
-<h2>Enviar a</h2>
+  <label>AUSENTISMOS:</label>
+  <textarea id="ausentismos"></textarea>
 
-<div class="row">
-  <input type="checkbox" name="destino" value="1154156494"> Supervisor
-</div>
-<div class="row">
-  <input type="checkbox" name="destino" value="1132560237"> Gerencia
-</div>
-<div class="row">
-  <input type="checkbox" name="destino" value="2617224497"> Seguridad
-</div>
+  <label>SEGURIDAD:</label>
+  <textarea id="seguridad"></textarea>
 
-<div class="row">
-  Manual: <input type="text" id="manual" placeholder="Ej: 1122334455">
-</div>
+  <label>BALANCE DE CHANGOS:</label>
+  <div class="fila">
+    <input type="number" id="changosFisico" placeholder="Físico">
+    <input type="number" id="changosTeorico" placeholder="Teórico">
+  </div>
+  <div id="changosDiferencia"></div>
 
-<button id="enviar">Enviar WhatsApp</button>
-<button id="vaciar">Vaciar</button>
+  <label>CCTV:</label>
+  <textarea id="cctv"></textarea>
+
+  <label>VTS:</label>
+  <textarea id="vts"></textarea>
+
+  <label>RECEPCIÓN:</label>
+  <textarea id="recepcion"></textarea>
+
+  <label>PORCENTAJES:</label>
+  <div class="fila">
+    <input type="number" id="suc" placeholder="SUC %">
+    <input type="number" id="media" placeholder="MEDIA %">
+  </div>
+
+  <label>PALLETS ADEUDADOS (CD):</label>
+  <input type="number" id="totalPallets" placeholder="Total pallets">
+  <div class="fila">
+    <input type="number" id="secos" placeholder="Secos">
+    <input type="number" id="noa" placeholder="NOA">
+    <input type="number" id="refrigerados" placeholder="Refrigerados">
+  </div>
+
+  <label>MAESTRANZA:</label>
+  <textarea id="maestranza"></textarea>
+
+  <label>Enviar a:</label>
+
+  <div class="telefono-item">
+    <input type="checkbox" name="destino" value="5491154156494">
+    <span>Jefe de Seguridad</span>
+  </div>
+
+  <div class="telefono-item">
+    <input type="checkbox" name="destino" value="5491132560237">
+    <span>Activador</span>
+  </div>
+
+  <div class="telefono-item">
+    <input type="checkbox" name="destino" value="5492617224497">
+    <span>BarrioNuevo</span>
+  </div>
+
+  <label>Teléfono manual:</label>
+  <input type="tel" id="telefono" placeholder="Ej: 1154156494">
+
+</form>
+
+<button id="enviar">Generar y Enviar WhatsApp</button>
+<button id="vaciar">Vaciar Datos</button>
 
 <script>
-// ================== SERVICE WORKER ==================
+/* ===== PWA ===== */
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js");
 }
 
-// ================== CHANGOS ==================
-const fisico = document.getElementById("changosFisico");
-const teorico = document.getElementById("changosTeorico");
-const resultado = document.getElementById("changosResultado");
+/* ===== CHECKBOX EXCLUSIVO ===== */
+const checkboxes = document.querySelectorAll('input[name="destino"]');
+const telefono = document.getElementById("telefono");
 
-function calcularChangos() {
-  if (fisico.value && teorico.value) {
-    resultado.textContent = "Diferencia: " + (fisico.value - teorico.value);
-  } else {
-    resultado.textContent = "";
+checkboxes.forEach(cb => {
+  cb.addEventListener("change", () => {
+    if (cb.checked) {
+      checkboxes.forEach(o => { if (o !== cb) o.checked = false; });
+      telefono.value = "";
+    }
+  });
+});
+
+telefono.addEventListener("input", () => {
+  if (telefono.value.trim()) {
+    checkboxes.forEach(cb => cb.checked = false);
   }
+});
+
+/* ===== LOCAL STORAGE ===== */
+const campos = document.querySelectorAll("input, textarea");
+
+function guardar() {
+  const data = {};
+  campos.forEach(c => data[c.id] = c.value);
+  localStorage.setItem("informeData", JSON.stringify(data));
 }
-fisico.oninput = calcularChangos;
-teorico.oninput = calcularChangos;
 
-// ================== ENVIAR ==================
-document.getElementById("enviar").onclick = () => {
+function cargar() {
+  const data = JSON.parse(localStorage.getItem("informeData") || "{}");
+  campos.forEach(c => {
+    if (data[c.id] !== undefined) c.value = data[c.id];
+  });
+  calcularChangos();
+}
 
-  const pallets = document.getElementById("pallets").value;
-  const seguridad = document.getElementById("seguridad").value;
+campos.forEach(c => c.addEventListener("input", guardar));
 
-  let msg = "📋 *Informe de Seguridad*\n";
-
-  if (pallets) msg += `Pallet adeudados: ${pallets}\n`;
-  if (seguridad) msg += `Seguridad: ${seguridad}\n`;
-  if (resultado.textContent) msg += resultado.textContent + "\n";
-
-  // === obtener destino ===
-  let tel = "";
-
-  const seleccionado = document.querySelector('input[name="destino"]:checked');
-  const manual = document.getElementById("manual").value.trim();
-
-  if (seleccionado) {
-    tel = "+549" + seleccionado.value;
-  } else if (manual) {
-    tel = "+549" + manual;
-  } else {
-    alert("Seleccioná un destinatario o ingresá uno manual");
+/* ===== CHANGOS ===== */
+function calcularChangos() {
+  if (!changosFisico.value && !changosTeorico.value) {
+    changosDiferencia.textContent = "";
     return;
   }
+  const dif = (parseInt(changosFisico.value)||0) - (parseInt(changosTeorico.value)||0);
+  changosDiferencia.textContent = "Diferencia: " + dif;
+}
+
+changosFisico.addEventListener("input", calcularChangos);
+changosTeorico.addEventListener("input", calcularChangos);
+
+/* ===== OBTENER TEL ===== */
+function obtenerTelefono() {
+  const marcado = document.querySelector('input[name="destino"]:checked');
+  if (marcado) return marcado.value;
+
+  let manual = telefono.value.replace(/\D/g, "");
+  if (manual) return manual.startsWith("549") ? manual : "549" + manual;
+
+  return null;
+}
+
+/* ===== ENVIAR ===== */
+document.getElementById("enviar").onclick = () => {
+  if (!fecha.value) return alert("Falta la fecha");
+
+  let msg = `Informe de Seguridad ${fecha.value.split("-").reverse().join("/")}\n\n`;
+
+  const bloque = (t, v) => {
+    msg += `${t}:\n`;
+    msg += v ? v.split("\n").filter(x=>x.trim()).map(x=>"- "+x).join("\n") : "- Sin Novedad";
+    msg += "\n\n";
+  };
+
+  bloque("AUSENTISMOS", ausentismos.value);
+  bloque("SEGURIDAD", seguridad.value);
+
+  if (changosFisico.value || changosTeorico.value) {
+    const dif = (parseInt(changosFisico.value)||0) - (parseInt(changosTeorico.value)||0);
+    msg += "BALANCE DE CHANGOS:\n";
+    if (changosFisico.value) msg += `- Físico: ${changosFisico.value}\n`;
+    if (changosTeorico.value) msg += `- Teórico: ${changosTeorico.value}\n`;
+    msg += `- Diferencia: ${dif}\n\n`;
+  }
+
+  bloque("CCTV", cctv.value);
+  bloque("VTS", vts.value);
+  bloque("RECEPCIÓN", recepcion.value);
+
+  const tel = obtenerTelefono();
+  if (!tel) return alert("Seleccioná un destinatario");
 
   window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`);
 };
 
-// ================== VACIAR ==================
+/* ===== VACIAR ===== */
 document.getElementById("vaciar").onclick = () => {
-  document.querySelector("textarea").value = "";
-  document.querySelectorAll("input").forEach(i => i.value = "");
-  resultado.textContent = "";
+  localStorage.removeItem("informeData");
+  document.getElementById("form").reset();
+  changosDiferencia.textContent = "";
 };
+
+window.onload = cargar;
 </script>
 
 </body>
