@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generador de Informes de Seguridad</title>
+  <title>Generador Informe Seguridad</title>
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -12,261 +12,235 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
+      margin: 15px;
+      background-color: #f0f0f0;
     }
-
-    h1 {
-      text-align: center;
-      user-select: none;
+    .campo {
+      margin-bottom: 15px;
     }
-
-    form {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
     label {
       display: block;
-      margin-bottom: 5px;
       font-weight: bold;
+      margin-bottom: 5px;
+      color: #333;
     }
-
-    input, textarea {
+    input, textarea, select {
       width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
+      padding: 10px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 5px;
       box-sizing: border-box;
+      font-size: 16px;
     }
-
+    textarea {
+      height: 80px;
+      resize: vertical;
+    }
     button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px 20px;
+      width: 100%;
+      padding: 12px;
       border: none;
-      border-radius: 4px;
+      border-radius: 5px;
+      font-size: 16px;
       cursor: pointer;
-      margin-right: 10px;
       margin-top: 10px;
     }
+    #generar { background-color: #2c3e50; color: white; }
+    #copiar { background-color: #27ae60; color: white; }
+    #vaciar { background-color: #e74c3c; color: white; margin-top: 20px; }
 
-    button:hover {
-      background-color: #3e8e41;
+    #informe-generado {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: none;
     }
-
-    .telefono-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 6px;
+    #cuadro-informe {
+      width: 100%;
+      height: 220px;
+      resize: vertical;
+      white-space: pre-line;
     }
-
-    .telefono-item input {
-      width: auto;
-      margin: 0;
+    .mensaje {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
     }
-
-    .balance {
-      display: flex;
-      gap: 10px;
+    #mensaje-copiado {
+      background-color: #d4edda;
+      color: #155724;
     }
-
-    .balance input {
-      flex: 1;
-    }
-
-    #changosDiferencia {
-      font-weight: bold;
-      margin-bottom: 10px;
+    #mensaje-vaciado {
+      background-color: #f8d7da;
+      color: #721c24;
     }
   </style>
 </head>
 
 <body>
 
-<h1>Generador de Informes de Seguridad</h1>
+<h2>Generador de Informe Seguridad</h2>
 
-<form id="informeForm" oninput="autoGuardar()">
+<div class="campo">
+  <label>FECHA:</label>
+  <input type="date" id="fecha">
+</div>
 
-  <label>Fecha:</label>
-  <input type="date" id="fecha" required>
+<div class="campo">
+  <label>SECTOR:</label>
+  <input type="text" id="sector" placeholder="Ej: Suc.209">
+</div>
 
-  <label>AUSENTISMOS:</label>
-  <textarea id="ausentismos"></textarea>
+<div class="campo">
+  <label>AUSENTISMO:</label>
+  <textarea id="ausentismo"></textarea>
+</div>
 
-  <label>SEGURIDAD:</label>
-  <textarea id="seguridad"></textarea>
+<div class="campo">
+  <label>CANTIDAD DE MÓVILES DEL CD A RECEPCIONAR:</label>
+  <input type="number" id="moviles-cd" min="0">
+</div>
 
-  <label>BALANCE DE CHANGOS:</label>
-  <div class="balance">
-    <input type="number" id="changosFisico" placeholder="Físico" oninput="calcularDiferencia()">
-    <input type="number" id="changosTeorico" placeholder="Teórico" oninput="calcularDiferencia()">
-  </div>
-  <div id="changosDiferencia"></div>
+<div class="campo">
+  <label>PULMÓN Y PASILLOS TÉCNICOS:</label>
+  <textarea id="pulmon-pasillos"></textarea>
+</div>
 
+<div class="campo">
+  <label>VTS FRÍO:</label>
+  <select id="novedades-frio">
+    <option value="sin">Sin novedades</option>
+    <option value="con">Con novedades</option>
+  </select>
+  <textarea id="detalle-frio" style="display:none;margin-top:5px;"></textarea>
+</div>
+
+<div class="campo">
+  <label>VTS PRECINTOS:</label>
+  <select id="novedades-precintos">
+    <option value="sin">Sin novedades</option>
+    <option value="con">Con novedades</option>
+  </select>
+  <textarea id="detalle-precintos" style="display:none;margin-top:5px;"></textarea>
+</div>
+
+<div class="campo">
   <label>CCTV:</label>
   <textarea id="cctv"></textarea>
+</div>
 
-  <label>VTS:</label>
-  <textarea id="vts"></textarea>
+<button id="generar">GENERAR INFORME</button>
 
-  <label>RECEPCIÓN:</label>
-  <textarea id="recepcion"></textarea>
+<div id="informe-generado">
+  <h3>Informe Generado</h3>
+  <textarea id="cuadro-informe" readonly></textarea>
+  <button id="copiar">COPIAR</button>
+  <p class="mensaje" id="mensaje-copiado">Informe copiado</p>
+</div>
 
-  <label>PORCENTAJES:</label>
-  <input type="number" id="suc" placeholder="SUC %">
-  <input type="number" id="media" placeholder="MEDIA %">
-
-  <label>PALLETS ADEUDADOS (CD):</label>
-  <input type="number" id="totalPallets" placeholder="Total pallets">
-  <input type="number" id="secos" placeholder="Secos">
-  <input type="number" id="noa" placeholder="NOA">
-  <input type="number" id="refrigerados" placeholder="Refrigerados">
-
-  <label>MAESTRANZA:</label>
-  <textarea id="maestranza"></textarea>
-
-  <label>Seleccionar teléfonos:</label>
-
-  <label class="telefono-item">
-    <input type="checkbox" value="5491154156494">
-    <span>Jefe de Seguridad</span>
-  </label>
-
-  <label class="telefono-item">
-    <input type="checkbox" value="5491132560237">
-    <span>Activador</span>
-  </label>
-
-  <label class="telefono-item">
-    <input type="checkbox" value="5492617224497">
-    <span>BarrioNuevo</span>
-  </label>
-
-  <label>Teléfono manual (opcional):</label>
-  <input type="tel" id="telefono" placeholder="Ej: 1154156494">
-
-</form>
-
-<button onclick="enviarWhatsApp()">Generar y Enviar</button>
-<button onclick="vaciar()">Vaciar Datos</button>
+<button id="vaciar">VACIAR TODO</button>
+<p class="mensaje" id="mensaje-vaciado">Datos eliminados</p>
 
 <script>
-function formatearFecha(f) {
-  const p = f.split("-");
-  return `${p[2]}/${p[1]}/${p[0]}`;
-}
-
-function calcularDiferencia() {
-  const f = parseInt(changosFisico.value) || 0;
-  const t = parseInt(changosTeorico.value) || 0;
-
-  if (!changosFisico.value && !changosTeorico.value) {
-    changosDiferencia.textContent = "";
-    return;
-  }
-
-  changosDiferencia.textContent = `Diferencia: ${f - t}`;
-}
-
-function autoGuardar() {
-  localStorage.setItem("informe", JSON.stringify({
-    fecha: fecha.value,
-    ausentismos: ausentismos.value,
-    seguridad: seguridad.value,
-    changosFisico: changosFisico.value,
-    changosTeorico: changosTeorico.value,
-    cctv: cctv.value,
-    vts: vts.value,
-    recepcion: recepcion.value,
-    suc: suc.value,
-    media: media.value,
-    totalPallets: totalPallets.value,
-    secos: secos.value,
-    noa: noa.value,
-    refrigerados: refrigerados.value,
-    maestranza: maestranza.value,
-    telefono: telefono.value
-  }));
-}
-
-function obtenerTelefonos() {
-  let tels = [...document.querySelectorAll('input[type="checkbox"]:checked')]
-    .map(cb => cb.value);
-
-  let manual = telefono.value.trim();
-  if (manual) {
-    manual = manual.replace(/\D/g, '');
-    if (!manual.startsWith('549')) manual = '549' + manual;
-    if (!tels.includes(manual)) tels.push(manual);
-  }
-  return tels;
-}
-
-function enviarWhatsApp() {
-  if (!fecha.value) return alert("Falta la fecha");
-
-  let informe = `Informe de Seguridad ${formatearFecha(fecha.value)}\n\n`;
-
-  function bloque(titulo, txt) {
-    informe += `${titulo}:\n`;
-    informe += txt
-      ? txt.split("\n").filter(x => x.trim()).map(x => `- ${x}`).join("\n")
-      : "- Sin Novedad";
-    informe += "\n\n";
-  }
-
-  bloque("AUSENTISMOS", ausentismos.value);
-  bloque("SEGURIDAD", seguridad.value);
-
-  if (changosFisico.value || changosTeorico.value) {
-    const f = parseInt(changosFisico.value) || 0;
-    const t = parseInt(changosTeorico.value) || 0;
-    informe += "BALANCE DE CHANGOS:\n";
-    if (changosFisico.value) informe += `- Físico: ${f}\n`;
-    if (changosTeorico.value) informe += `- Teórico: ${t}\n`;
-    informe += `- Diferencia: ${f - t}\n\n`;
-  }
-
-  bloque("CCTV", cctv.value);
-  bloque("VTS", vts.value);
-  bloque("RECEPCIÓN", recepcion.value);
-
-  let tels = obtenerTelefonos();
-  if (!tels.length) return alert(informe);
-
-  let tel = tels.length > 1
-    ? prompt("Elegí número:\n" + tels.join("\n"), tels[0])
-    : tels[0];
-
-  if (tel) window.open(`https://wa.me/${tel}?text=${encodeURIComponent(informe)}`);
-}
-
-function vaciar() {
-  localStorage.removeItem("informe");
-  informeForm.reset();
-  changosDiferencia.textContent = "";
-}
-
-window.onload = () => {
-  let d = JSON.parse(localStorage.getItem("informe") || "{}");
-  Object.keys(d).forEach(k => {
-    const el = document.getElementById(k);
-    if (el) el.value = d[k];
-  });
-  calcularDiferencia();
-  if (!fecha.value) fecha.value = new Date().toISOString().split("T")[0];
-};
-</script>
-
-<!-- Registro Service Worker -->
-<script>
+/* =======================
+   REGISTRO SERVICE WORKER
+======================= */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js");
+    navigator.serviceWorker.register("./service-worker.js");
   });
 }
+
+/* =======================
+   LOCAL STORAGE
+======================= */
+const campos = [
+  "fecha","sector","ausentismo","moviles-cd",
+  "pulmon-pasillos","novedades-frio","detalle-frio",
+  "novedades-precintos","detalle-precintos","cctv"
+];
+
+function guardar() {
+  const data = {};
+  campos.forEach(id => data[id] = document.getElementById(id).value);
+  localStorage.setItem("informeSeguridad", JSON.stringify(data));
+}
+
+function cargar() {
+  const data = JSON.parse(localStorage.getItem("informeSeguridad") || "{}");
+  campos.forEach(id => {
+    if (data[id]) document.getElementById(id).value = data[id];
+  });
+  toggleDetalles();
+}
+
+function toggleDetalles() {
+  detalle-frio.style.display =
+    novedades-frio.value === "con" ? "block" : "none";
+  detalle-precintos.style.display =
+    novedades-precintos.value === "con" ? "block" : "none";
+}
+
+campos.forEach(id =>
+  document.getElementById(id).addEventListener("input", guardar)
+);
+
+novedades-frio.onchange = () => { toggleDetalles(); guardar(); };
+novedades-precintos.onchange = () => { toggleDetalles(); guardar(); };
+
+window.onload = cargar;
+
+/* =======================
+   GENERAR INFORME
+======================= */
+generar.onclick = () => {
+  const fecha = fecha.value.split("-").reverse().join("/");
+  const informe =
+`INFORME SEGURIDAD ${fecha}
+Informe Seguridad ${sector.value}
+
+AUSENTISMO:
+${ausentismo.value || "Sin novedades"}
+
+SEGURIDAD / CCTV:
+${cctv.value || "Sin novedades"}
+
+VTS FRÍO:
+${novedades-frio.value === "con" ? detalle-frio.value : "Sin novedades"}
+
+VTS PRECINTOS:
+${novedades-precintos.value === "con" ? detalle-precintos.value : "Sin novedades"}
+
+PULMÓN Y PASILLOS TÉCNICOS:
+${pulmon-pasillos.value || "Sin observaciones"}
+
+RECEPCIÓN:
+Móviles CD: ${moviles-cd.value || 0}`;
+
+  cuadro-informe.value = informe;
+  informe-generado.style.display = "block";
+};
+
+/* =======================
+   COPIAR / VACIAR
+======================= */
+copiar.onclick = () => {
+  cuadro-informe.select();
+  navigator.clipboard.writeText(cuadro-informe.value);
+  mensaje-copiado.style.display = "block";
+  setTimeout(() => mensaje-copiado.style.display = "none", 2000);
+};
+
+vaciar.onclick = () => {
+  localStorage.removeItem("informeSeguridad");
+  campos.forEach(id => document.getElementById(id).value = "");
+  informe-generado.style.display = "none";
+  mensaje-vaciado.style.display = "block";
+  setTimeout(() => mensaje-vaciado.style.display = "none", 2000);
+};
 </script>
 
 </body>
