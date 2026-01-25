@@ -1,7 +1,7 @@
 {
-  "name": "Generador de Informes de Seguridad",
-  "short_name": "Informes Seguridad",
-  "start_url": "index.html",
+  "name": "Informe de Seguridad",
+  "short_name": "Seguridad",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4CAF50",
