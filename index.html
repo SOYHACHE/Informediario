@@ -15,7 +15,14 @@
       padding: 15px;
       background: #f4f4f4;
     }
-    h1 { text-align: center; }
+    h1 {
+      text-align: center;
+    }
+    h1 select {
+      font-size: 1.1em;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
     form {
       max-width: 650px;
       margin: auto;
@@ -24,7 +31,7 @@
       border-radius: 8px;
     }
     label { font-weight: bold; margin-top: 10px; display: block; }
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 8px;
       margin-top: 5px;
@@ -59,7 +66,12 @@
 
 <body>
 
-<h1>Generador de Informes de Seguridad</h1>
+<h1>
+  <select id="tipoInforme">
+    <option value="INFORME DE SEGURIDAD">INFORME DE SEGURIDAD</option>
+    <option value="APERTURA DE SEGURIDAD">APERTURA DE SEGURIDAD</option>
+  </select>
+</h1>
 
 <form id="form">
 
@@ -156,7 +168,7 @@ telefono.addEventListener("input", () => {
 });
 
 /* ===== LOCAL STORAGE ===== */
-const campos = document.querySelectorAll("input, textarea");
+const campos = document.querySelectorAll("input, textarea, select");
 
 function guardar() {
   const data = {};
@@ -202,11 +214,12 @@ function obtenerTelefono() {
 document.getElementById("enviar").onclick = () => {
   if (!fecha.value) return alert("Falta la fecha");
 
-  let msg = `Informe de Seguridad ${fecha.value.split("-").reverse().join("/")}\n\n`;
+  const tipo = document.getElementById("tipoInforme").value;
+  let msg = `${tipo} ${fecha.value.split("-").reverse().join("/")}\n\n`;
 
   const bloque = (t, v) => {
     msg += `${t}:\n`;
-    msg += v ? v.split("\n").filter(x=>x.trim()).map(x=>"- "+x).join("\n") : "- Sin Novedad";
+    msg += v ? v.split("\n").filter(x => x.trim()).map(x => "- " + x).join("\n") : "- Sin Novedad";
     msg += "\n\n";
   };
 
