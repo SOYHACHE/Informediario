@@ -15,9 +15,7 @@
       padding: 15px;
       background: #f4f4f4;
     }
-    h1 {
-      text-align: center;
-    }
+    h1 { text-align: center; }
     h1 select {
       font-size: 1.1em;
       padding: 6px 10px;
@@ -30,7 +28,11 @@
       padding: 15px;
       border-radius: 8px;
     }
-    label { font-weight: bold; margin-top: 10px; display: block; }
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
     input, textarea, select {
       width: 100%;
       padding: 8px;
@@ -113,6 +115,18 @@
     <input type="number" id="noa" placeholder="NOA">
     <input type="number" id="refrigerados" placeholder="Refrigerados">
   </div>
+
+  <!-- 🔹 NUEVA SECCIÓN -->
+  <label>PULMÓN Y PASILLOS TÉCNICOS:</label>
+
+  <label style="font-weight: normal;">PULMÓN:</label>
+  <textarea id="pulmon"></textarea>
+
+  <label style="font-weight: normal;">TÉCNICO PRINCIPAL:</label>
+  <textarea id="tecnicoPrincipal"></textarea>
+
+  <label style="font-weight: normal;">TÉCNICO NOA:</label>
+  <textarea id="tecnicoNoa"></textarea>
 
   <label>MAESTRANZA:</label>
   <textarea id="maestranza"></textarea>
@@ -214,12 +228,12 @@ function obtenerTelefono() {
 document.getElementById("enviar").onclick = () => {
   if (!fecha.value) return alert("Falta la fecha");
 
-  const tipo = document.getElementById("tipoInforme").value;
+  const tipo = tipoInforme.value;
   let msg = `${tipo} ${fecha.value.split("-").reverse().join("/")}\n\n`;
 
   const bloque = (t, v) => {
     msg += `${t}:\n`;
-    msg += v ? v.split("\n").filter(x => x.trim()).map(x => "- " + x).join("\n") : "- Sin Novedad";
+    msg += v ? v.split("\n").filter(x=>x.trim()).map(x=>"- "+x).join("\n") : "- Sin Novedad";
     msg += "\n\n";
   };
 
@@ -237,6 +251,10 @@ document.getElementById("enviar").onclick = () => {
   bloque("CCTV", cctv.value);
   bloque("VTS", vts.value);
   bloque("RECEPCIÓN", recepcion.value);
+  bloque("PULMÓN", pulmon.value);
+  bloque("TÉCNICO PRINCIPAL", tecnicoPrincipal.value);
+  bloque("TÉCNICO NOA", tecnicoNoa.value);
+  bloque("MAESTRANZA", maestranza.value);
 
   const tel = obtenerTelefono();
   if (!tel) return alert("Seleccioná un destinatario");
